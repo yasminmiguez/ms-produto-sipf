@@ -1,17 +1,14 @@
 package br.com.fiap.ms_produto.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_produto")
+
 public class Produto {
 
     @Id
@@ -22,11 +19,27 @@ public class Produto {
     private Double valor;
 
     // Relacionamento
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_produto_loja", //tabela associativa
+            joinColumns = @JoinColumn(name="produto_id"), //ref FK mesma entidade da classe
+    inverseJoinColumns = @JoinColumn(name = "loja_id")) //ref PK - da outra classe
+    private Set<Loja> lojas = new HashSet<>();
+
+
     public Produto() {
+
+    }
+
+    public Set<Loja> getLojas() {
+        return lojas;
+    }
+
+    public void setLojas(Set<Loja> lojas) {
+        this.lojas = lojas;
     }
 
     public Produto(Long id, String nome, String descricao,
